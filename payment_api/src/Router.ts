@@ -1,6 +1,7 @@
 import { Router as ExpreessRouter, Request, Response } from 'express';
 import PagSeguroController from './controller/PagSeguroController';
 import SharedState from './interfaces/SharedState';
+import BasicAuthDecorator from './decorators/BasicAuthDecorator';
 
 
 export default class Router {
@@ -9,6 +10,7 @@ export default class Router {
   sharedState: SharedState = {};
 
   pagSeguroController = new PagSeguroController();
+  protectedPagSeguroController = new BasicAuthDecorator(new PagSeguroController());
 
   constructor() {
     this.router = ExpreessRouter();
@@ -22,7 +24,7 @@ export default class Router {
   }
 
   private async startPayment(req: Request, res: Response): Promise<void> {
-    this.pagSeguroController.execute(req, res, this.sharedState);
+    this.protectedPagSeguroController.execute(req, res, this.sharedState);
     return undefined;
   }
 

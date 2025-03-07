@@ -1,11 +1,18 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 import Decorator from "../interfaces/pattern/Decorator";
 import Controller from "../interfaces/Controller";
 import SharedState from "../interfaces/SharedState";
-import findUserByEmail from '../utils/findUser';
+import { getOtherServiceUrl } from '../utils/common/getService';
+import axios from 'axios';
 
 
+function decodeBasicAuth(authorization: string): [email: string, password: string] {
+  // Assumes the authorization header is in the format 'Basic <credentials>'
+  const base64Credentials = authorization.split(' ')[1];
+  const decodedCredentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
+  return decodedCredentials.split(':') as [string, string];
+}
 
 class BasicAuthMiddleware implements Decorator {
   /*
@@ -37,29 +44,23 @@ class BasicAuthMiddleware implements Decorator {
 
     const [email, password] = decodeBasicAuth(authHeader);
 
-    const foundUser = await findUserByEmail(email).catch((e) => null);
-    if (!foundUser) {
-      res.status(401).json({ message: 'Unauthorized: Invalid username or password' });
+    console.log("Pedindo a URL do serviço de usuário")
+    const userServicesUrl = await getOtherServiceUrl("user");
+    if (!userServicesUrl) {
+      res.status(500).json({ message: 'Erro ao buscar URL do serviço de usuários para validar autenticação do userId.' });
       return false;
     }
 
-    const hasCorrectPass = await bcrypt
-      .compare(password, foundUser.password)
-      .then((result: boolean) => result);
-
-    if (!hasCorrectPass) {
-      res.status(401).json({ message: 'Unauthorized: Invalid username or password' });
+    console.log(`Mandando requisição para o serviço de usuário ${userServicesUrl}/auth/${email}/${password}`)
+    const isValidUser = await axios.get(`${userServicesUrl}/auth/${email}/${password}`);
+    if (!isValidUser.data?.isValid) {
+      res.status(400).json({ message: 'Não autorizado.' });
       return false;
     }
 
-    sharedState['user'] = foundUser;
     return true;
   }
 
 }
 
 export default BasicAuthMiddleware;
-function decodeBasicAuth(authHeader: string): [any, any] {
-  throw new Error('Function not implemented.');
-}
-

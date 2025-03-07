@@ -34,6 +34,12 @@ export default class PagSeguroRepository {
   //   return true;
   // }
 
+  public async getByIndempotentId(id: string): Promise<Payment | null> {
+    return await this.database.prisma.payment.findUnique({
+      where: { idempotentId: id },
+    });
+  }
+
   public async getById(id: string): Promise<Payment | null> {
     return await this.database.prisma.payment.findUnique({
       where: { id: id },
@@ -74,15 +80,17 @@ export default class PagSeguroRepository {
     // return order;
   }
 
-  public async create(userId: string, idempotentId: string, productIds: string[], totalCost: number, status: string): Promise<Payment> {
+  public async create(userId: string, idempotentId: string, productIds: string[], quantities: number[], unitPrices: number[], totalCost: number, status: string): Promise<Payment> {
     return await this.database.prisma.payment.create({
       data: {
         id: uuidV4(),
         userId: userId,
         idempotentId: idempotentId,
         products: productIds,
+        quantities: quantities,
+        unitPrices: unitPrices,
         totalCost: totalCost,
-        status: "pending"
+        isPending: true
       }
     });
   }

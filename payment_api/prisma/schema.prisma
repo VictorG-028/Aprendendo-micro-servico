@@ -13,17 +13,13 @@ datasource db {
   url      = env("DATABASE_URL_PAYMENT")
 }
 
-enum OrderStatus {
-  new     @map("new")   
-  pending @map("pending")
-  done    @map("done")
-}
-
 model Payment {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   idempotentId String    @unique
   userId       String    // Referência ao User de outro serviço
   products     String[]  // Lista de IDs dos produtos
+  quantities   Int[]     // Lista de quantidade dos produtos
+  unitPrices   Float[]   // Lista de preço dos produtos
   totalCost    Float
-  status       OrderStatus
+  isPending    Boolean
 }
