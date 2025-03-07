@@ -39,7 +39,7 @@ app.use(express.json());
 app.get('/validate/:id', validateUserId);
 app.get('/auth/:email/:password', auth);
 app.get('/fake-user', (req: Request, res: Response) => { res.status(200).json(user) });
-app.get('/', (req: Request, res: Response) => { res.send('Product API'); });
+app.get('/', (req: Request, res: Response) => { res.send('User API'); });
 app.listen(envVars.PORT, () => {
   console.log(`Server is running on port ${envVars.PORT}`);
   DiscoveryRegister.doRegistrationWithRetry();

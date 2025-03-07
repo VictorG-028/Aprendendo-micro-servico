@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "dev": "ngrok http --domain=certain-seasnail-entirely.ngrok-free.app 8080 && node src/server.js",
-    "start": "ngrok http --domain=certain-seasnail-entirely.ngrok-free.app 8080 && node src/server.js",
-    "alt": "node src/server.js"
+    "dev": "node server.js",
+    "dev-ngrok": "ngrok http --domain=certain-seasnail-entirely.ngrok-free.app 8080 && node server.js",
+    "dev-container": "node server.js"
   },
   "keywords": [
     "ngrok"

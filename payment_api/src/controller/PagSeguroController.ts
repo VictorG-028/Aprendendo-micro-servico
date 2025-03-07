@@ -221,9 +221,9 @@ export default class PagSeguroController implements Controller {
 
     await this.pagSeguroRepository.create(userId, idempotentId, productsIds, quantities, unitPrices, totalCost, 'new');
 
-    setTimeout(async () => {
-      const ngrok_response = await axios.post(`${process.env.PAGSEGURO_REDIRECT_URI}/notify?topic=payment&id=${idempotentId}`);
-    }, 5000);
+    // setTimeout(async () => {
+    //   const ngrok_response = await axios.post(`${process.env.PAGSEGURO_REDIRECT_URI}/notify?topic=payment&id=${idempotentId}`);
+    // }, 5000);
 
     res.status(200).json({ message: 'Compra iniciada' });
     return null;

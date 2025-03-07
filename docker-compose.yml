@@ -45,20 +45,20 @@ services:
       - DATABASE_URL=${DATABASE_URL_PRODUCT}
     # command: ["./init.sh", "apsoo_postgres", "npm", "dev"]
   
-  # apsoo_payment_api:
-  #   build: ./payment_api/
-  #   container_name: apsoo_payment_api
-  #   ports:
-  #     - 8002:8002
-  #   networks:
-  #     - apsoo_net
-  #   depends_on:
-  #     apsoo_postgres:
-  #       condition: service_healthy
-  #     apsoo_discovery_api:
-  #       condition: service_started
-  #   environment:
-  #     - DATABASE_URL=${DATABASE_URL_PAYMENT}
+  apsoo_payment_api:
+    build: ./payment_api/
+    container_name: apsoo_payment_api
+    ports:
+      - 8002:8002
+    networks:
+      - apsoo_net
+    depends_on:
+      apsoo_postgres:
+        condition: service_healthy
+      apsoo_discovery_api:
+        condition: service_started
+    environment:
+      - DATABASE_URL=${DATABASE_URL_PAYMENT}
 
   apsoo_user_api:
     build: ./user_api/

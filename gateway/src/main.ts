@@ -95,14 +95,22 @@ async function mapRequestToService(req: Request, res: Response, next: Function):
   if (!serviceUrl) {
     return res.status(500).json({ error: "No available service for this category" });
   }
+
+  // Gambiarra pra repassar somente 2 tipos de header. (TODO: remover essa gambiarra)
+  const forwardedHeaders: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (req.headers.authorization) {
+    forwardedHeaders["Authorization"] = req.headers.authorization as string;
+  }
+
   console.log("Chegou aqui", req.method, req.headers, req.body, `${serviceUrl}/${req.params[0]}`);
   const response = await axios({
     method: req.method,
     url: `${serviceUrl}/${req.params[0]}`,
     data: req.body,
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: forwardedHeaders,
   }).then((r) => {
     console.log("Chegou aqui SUCCESS");
     res.status(r.status).json(r.data);
