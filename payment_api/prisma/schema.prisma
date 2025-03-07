@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_PAYMENT")
+}
+
+enum OrderStatus {
+  new     @map("new")   
+  pending @map("pending")
+  done    @map("done")
+}
+
+model Payment {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  idempotentId String    @unique
+  userId       String    // Referência ao User de outro serviço
+  products     String[]  // Lista de IDs dos produtos
+  totalCost    Float
+  status       OrderStatus
+}

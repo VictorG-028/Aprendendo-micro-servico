@@ -1,0 +1,31 @@
+{
+  "name": "user_api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env ENVIRONMENT=local ts-node-dev --respawn src/main.ts",
+    "dev-container": "cross-env ENVIRONMENT=docker ts-node-dev --respawn src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.1",
+    "bcrypt": "^5.1.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ts-node-dev": "^2.0.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.4.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
+    "prisma": "^6.4.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

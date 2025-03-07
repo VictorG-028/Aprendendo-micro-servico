@@ -1,0 +1,84 @@
+
+services:
+
+  apsoo_postgres:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    container_name: apsoo_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - apsoo_net
+    volumes:
+      - apsoo_db_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh # Databases are created in the init-db.sh script
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+     
+
+  apsoo_discovery_api:
+    build: ./gateway/
+    container_name: apsoo_discovery_api
+    ports:
+      - 8000:8000
+    networks:
+      - apsoo_net
+
+  apsoo_product_api:
+    build: ./product_api/
+    container_name: apsoo_product_api
+    ports:
+      - 8003:8003
+    networks:
+      - apsoo_net
+    depends_on:
+      apsoo_postgres:
+        condition: service_healthy
+      apsoo_discovery_api:
+        condition: service_started
+    environment:
+      - DATABASE_URL=${DATABASE_URL_PRODUCT}
+    # command: ["./init.sh", "apsoo_postgres", "npm", "dev"]
+  
+  # apsoo_payment_api:
+  #   build: ./payment_api/
+  #   container_name: apsoo_payment_api
+  #   ports:
+  #     - 8002:8002
+  #   networks:
+  #     - apsoo_net
+  #   depends_on:
+  #     apsoo_postgres:
+  #       condition: service_healthy
+  #     apsoo_discovery_api:
+  #       condition: service_started
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL_PAYMENT}
+
+  apsoo_user_api:
+    build: ./user_api/
+    container_name: apsoo_user_api
+    ports:
+      - 8001:8001
+    networks:
+      - apsoo_net
+    depends_on:
+      apsoo_postgres:
+        condition: service_healthy
+      apsoo_discovery_api:
+        condition: service_started
+    environment:
+      - DATABASE_URL=${DATABASE_URL_USER}
+
+
+networks:
+  apsoo_net:
+    driver: "bridge"
+
+volumes:
+  apsoo_db_data:
