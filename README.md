@@ -1,4 +1,6 @@
-# Serviços
+# Micro Serviços
+
+Esse repositório utiliza a arquitetura de micro serviços.
 
 - Product (implementa 3 casos de uso)
 - User (autenticação e valição)
